@@ -2,6 +2,8 @@
 using CsvHelper.Configuration;
 using Integration.Domain;
 using Integration.Infrastructure.Repositories;
+using OfficeOpenXml;
+using System.ComponentModel;
 using System.Globalization;
 
 namespace Integration.Application;
@@ -71,12 +73,15 @@ public class EmployeeServices : IEmployeeServices
         {
             if (!File.Exists(filePath))
                 return addedRows;
-            
+
 
             using (var csv = new CsvReader(new StreamReader(filePath), new CsvConfiguration(CultureInfo.InvariantCulture)))
             {
-                csv.Context.RegisterClassMap<EmployeeMap>();  
-                var records = csv.GetRecords<Employee>().ToList();  
+                csv.Context.RegisterClassMap<EmployeeMap>();
+                var records = csv.GetRecords<Employee>().ToList();
+
+                Console.WriteLine(records.Count);
+
 
                 records.Select(async employee => await employeeRepository.InsertAsync(employee));
 
